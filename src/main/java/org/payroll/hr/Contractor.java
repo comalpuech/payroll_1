@@ -21,13 +21,19 @@ public class Contractor implements Payable{
     }
 
     public double calculatePay() {
-        return 0;
+        return hoursWorked*partsCost;
     }
 
 
-    public String generatePayStub(String s){
-        return "";
+
+    @Override
+    public String generatePayStub(String payDate) {
+        return "\t\t\t" + "\n\t" + "Name: " + this.name +
+                "\n\t" + "Pay Date \t " + payDate +
+                "\n\t" + "Hours \t" + this.hoursWorked +
+                "\n\t" + "Payment $" + this.calculatePay() + "\n\n";
     }
+
 
     @Override
     public String toString() {

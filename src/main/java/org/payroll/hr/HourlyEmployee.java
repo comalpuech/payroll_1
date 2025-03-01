@@ -19,16 +19,12 @@ public class HourlyEmployee extends Employee {
     }
 
     public double calculatePay(){
-        return 0;
+        return hoursWorked*getPayRate();
     }
 
-    public String generatePayStub(String s){
-        return "";
-    }
-
-
-    public String toString() {
-        return "\t\t\t" + "\n\t" + "Name: " + this.getName() +
+    public String generatePayStub(String payDate){
+        return "\t\t\t" + "\n\t" + "Name: " + this.getName() + " - Employee Id: " + this.getEmployeeID() +
+                "\n\t" + "Pay Date \t " + payDate +
                 "\n\t" + "Hours \t " + this.hoursWorked +
                 "\n\t" + "Total Days Payment $" + this.calculatePay();
     }

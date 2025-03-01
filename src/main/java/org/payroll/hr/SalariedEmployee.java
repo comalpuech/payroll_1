@@ -14,20 +14,18 @@ public class SalariedEmployee extends Employee{
         this.salary=salary;
     }
 
-    @Override
-    public String toString() {
-        return String.format("\n\tName: " + this.getName() +
-                "\n\tGross Salary $" + this.salary +
-                "\n\tNet Salary $%.2f", calculatePay());
 
-    }
 
     public double calculatePay(){
-        return 0;
+        return salary-(salary*.3);
     }
 
-    String generatePayStub(String s){
-        return "";
+    public String generatePayStub(String payDate){
+        return "\t\t\t" + "\n\t" + "Name: " + this.getName() + " - Employee Id: " + this.getEmployeeID() +
+                "\n\t" + "Pay Date \t " + payDate +
+                "\n\t" + "Gross Salary $" + this.salary +
+                "\n\t" + "Net Salary $" + calculatePay() + "\n\n";
     }
+
 
 }

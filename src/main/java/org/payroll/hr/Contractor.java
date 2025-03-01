@@ -20,6 +20,15 @@ public class Contractor implements Payable{
         this.hoursWorked=hoursWorked;
     }
 
+    public double calculatePay() {
+        return 0;
+    }
+
+
+    public String generatePayStub(String s){
+        return "";
+    }
+
     @Override
     public String toString() {
         return"Name: " + this.name +"\nHours Worked: " + this.hoursWorked + "\nParts : " + this.partsCost;
@@ -29,4 +38,3 @@ public class Contractor implements Payable{
 
 
 
-}

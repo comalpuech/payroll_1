@@ -5,10 +5,10 @@ public abstract class Employee implements Payable {
 
     private String name;
     private double payRate;
-    private int EMPLOYEE_ID;
+    private final int EMPLOYEE_ID;
     private Address address;
-    private final int nextID = 1000;
-    private final double STARTING_PAY_RATE =7.75;
+    private static int nextID = 1000;
+    private final static double STARTING_PAY_RATE =7.75;
 
     public Employee(String name){
         this.name = name;
@@ -21,6 +21,8 @@ public abstract class Employee implements Payable {
         this.payRate = payRate;
         EMPLOYEE_ID = getNextID();
     }
+
+
 
     public String getName(){
         return name;
@@ -38,7 +40,7 @@ public abstract class Employee implements Payable {
         this.address.toString();
     }
 
-    public final int getNextID(){
+    public static int getNextID(){
         int id = nextID;
         nextID++;
         return id;

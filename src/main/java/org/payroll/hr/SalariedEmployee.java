@@ -22,4 +22,12 @@ public class SalariedEmployee extends Employee{
 
     }
 
+    public double calculatePay(){
+        return 0;
+    }
+
+    String generatePayStub(String s){
+        return "";
+    }
+
 }

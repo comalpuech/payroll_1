@@ -1,8 +1,8 @@
 package org.payroll.hr;
 public interface Payable {
 
-    public double calculatePay();
+    double calculatePay();
 
-    public String generatePayStub(String s);
+    String generatePayStub(String s);
 }
 

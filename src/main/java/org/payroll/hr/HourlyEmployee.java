@@ -19,7 +19,11 @@ public class HourlyEmployee extends Employee {
     }
 
     public double calculatePay(){
-        return hoursWorked*
+        return 0;
+    }
+
+    public String generatePayStub(String s){
+        return "";
     }
 
 

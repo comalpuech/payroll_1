@@ -1,6 +1,5 @@
 package org.payroll.hr;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -9,7 +8,9 @@ public class Main {
     private static final int ACCEPTED_COMPANY_NAME_LEN=3;
     private static final String COMPANY_NAME = "Enter the name of the Company - ";
     private static final String PRE_NARR =  "Please enter the ";
-    private static final String COMPANY_NAME_NARR = "Company Name";
+    private static final String COMPANY_ERROR_NARRATION_INPUT = "\nInvalid Company name - must only contain letters, numbers or spaces. Minimum length must be greater than 3 characters\n";
+    private static final String EMPLOYEE_NAME_ERROR_NARRATION = "\nInvalid employee name";
+
     private static boolean COMPANY_NAME_CREATED = false;
     private static boolean COMPANY_EXISTS = false;
     private static boolean COMPANY_ADDRESS_EXISTS = false;
@@ -21,25 +22,30 @@ public class Main {
     private  static final String SETUP_INCOMPLETE = "Company setup is incomplete - Must create a Company and Address to access Payroll Menu\n";
     private static final int COMPANY_PAYROLL_APPLICATION = 3;
     private static final int EXIT_APPLICATION = 4;
+    private static final int EXIT_EMPLOYEE_APPLICATION = 6;
     private static final String COMPANY_NOT_CREATED = "\nInvalid Selection - Company has not yet been created.\nBoth Company Name and Address must be created first\n";
-    private static final String INVALID_CHOICE_PAYROLL_NOT_COMPLETE = " Invalid choice\\nPlease select a valid option!\\nNOTE: Payroll Menu not available until Company Name and Address setup is complete!\n\n";
+    private static final String INVALID_CHOICE_PAYROLL_NOT_COMPLETE = "Invalid choice - Please select a valid option!\nNOTE: Payroll Menu not available until Company Name and Address setup is complete!\n\n";
     private static final String HOURS_WORKED = "Enter number of hours (as integer) the contractor worked - ";
     private static final String PARTS_COST = "Enter the cost of the parts - ";
     private static final String CONTRACTOR_NAME = "Enter the name of the contractor or Business Name - ";
+    private static final String SALARY_LEVEL = "Enter salary for employee - ";
+    private static final String EMP_NAME = "Enter name for employee - ";
+
     private ArrayList<Contractor> contractors = new ArrayList<Contractor>();
+    private ArrayList<Employee> employees = new ArrayList<Employee>();
     private final static String PAYROLL_MENU = """            
-    
-            Company Payroll System
+              Company Payroll System
             
             1. Create new Contractor
             2. Create new Salary Employee
             3. Create Hourly Employee
-            4. Exit Payroll Application
+            4. Show all Contractors
+            5. Show all Salary/Hourly Employee
+            6. Exit
             
-            Enter your selection (1-4) -\s""";
+            Enter your selection (1-6) -\s""";
     private final static String COMPANY_MENU = """           
-            
-            Company Maintenance
+             \nCompany Maintenance
             
             1. Create new Company
             2. Add Company Address
@@ -48,141 +54,240 @@ public class Main {
             
             Enter your selection (1-4) -\s""";
     private Company mainCompany;
-    private String companyName = "";
+    private String companyName;
 
     public static void main(String[] args) {
         Main program = new Main();
-        Scanner userInput = new Scanner(System.in);
+
         boolean runApp = true;
         while (runApp) {
-            runApp = program.executeMenus(userInput);
+            runApp = program.executeMenus();
         }
         System.out.println("\nExiting Payroll Application\nGood Bye\n");
     }
 
-
-
-
-    private void runPayrollApplication(Scanner input) {
-        int selection;
-        selection = askIntegerInput(input,PAYROLL_MENU, 1, 4 );
+    /**
+     * Main control for employee creation
+     * @param selection Type of employee
+     */
+    private void runPayrollApplication( int selection) {
         switch (selection) {
 
             case 1:
-                createContractor(input);
+                createContractor();
                 break;
             case 2:
-              //  createSalaryEmployee(input);
+                createSalaryEmployee();
                 break;
             case 3:
-              //  createhourlyEmployee(input);
+                createHourlyEmployee();
                 break;
+            case 4:
+                showContractors();
+                break;
+            case 5:
+                showEmployee();
             default:
                 break;
         }
     }
 
-    private void createContractor(Scanner input) {
-        int hoursWorked = askIntegerInput(input, HOURS_WORKED,1, 10);
-        double partsCost = askDoubleInput(input, PARTS_COST, 1,1000);
-        String name = askStringInput(input, CONTRACTOR_NAME);
-        contractors.add(new Contractor(name, hoursWorked, partsCost));
+    /**
+     * Set name of Employee
+     * @param narration Narration for input
+     * @return name of employee
+     */
+    private String setEmployeeName(String narration) {
+        String employeeName="";
+        while (true) {
+            employeeName = askStringInput(narration, EMPLOYEE_NAME_ERROR_NARRATION);
+            if (employeeName.isEmpty()) {
+                System.out.println(EMPLOYEE_NAME_ERROR_NARRATION);
+            } else {
+                break;
+            }
+        }
+
+        return employeeName;
     }
 
 
+    /**
+     * Print Contractor list
+     */
+    private void showContractors() {
+        System.out.println("\nContractor List\n");
+        for (Contractor contractor : contractors) {
+            System.out.println(contractor.toString());
+        }
+        System.out.println("\n\n");
+    }
 
-    private boolean executeMenus(Scanner input) {
+    /**
+     * Show employees
+     */
+    private void showEmployee() {
+        System.out.println("\nEmployee List\n");
+        for (Employee employee : employees) {
+            System.out.println(employee.toString());
+        }
+        System.out.println("\n\n");
+    }
+
+
+    /**
+     * Create Salary Employees
+     */
+    private void createSalaryEmployee() {
+        double salary = askDoubleInput(SALARY_LEVEL,1,1000);
+        String name = setEmployeeName(EMP_NAME);
+        employees.add(new SalariedEmployee(name, salary));
+    }
+
+    /**
+     * Create hourly Employee
+     */
+    private void createHourlyEmployee() {
+        int hoursWorked = askIntegerInput(HOURS_WORKED,1,10);
+        String name = setEmployeeName(EMP_NAME);
+        employees.add(new HourlyEmployee(name, hoursWorked));
+    }
+
+    /**
+     * Create contractor
+     */
+    private void createContractor() {
+        int hoursWorked = askIntegerInput(HOURS_WORKED,1, 10);
+        double partsCost = askDoubleInput(PARTS_COST, 1,1000);
+        String name = setEmployeeName(CONTRACTOR_NAME);
+        contractors.add(new Contractor(name, hoursWorked, partsCost));
+
+    }
+
+
+    /**
+     * Main control of menu functions
+     * @return
+     */
+    private boolean executeMenus() {
         int selection;
         if (COMPANY_EXISTS && COMPANY_ADDRESS_EXISTS) {
-            selection = askIntegerInput(input,PAYROLL_MENU, 1, 4 );
-            if (selection!=EXIT_APPLICATION) {
-                runPayrollApplication(input);
-            } else {
+            selection = askIntegerInput(PAYROLL_MENU, 1, 6 );
+            if (selection==EXIT_EMPLOYEE_APPLICATION) {
                 return false;
+            } else {
+                runPayrollApplication(selection);
             }
 
         } else {
-            selection = askIntegerInput(input,COMPANY_MENU, 1, 4 );
+            selection = askIntegerInput(COMPANY_MENU, 1, 4 );
             if (selection!=EXIT_APPLICATION) {
-                runCompanyMaintenance(selection, input);
+                runCompanyMaintenance(selection);
                 return true;
             }
         }
-        return false;
+        return true;
     }
 
-    private String generatePayDate() {
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        return sdf.format(date);
-    }
 
-        private void runCompanyMaintenance(int selection, Scanner input) {
-
-        String[] details = new String[4];
-
+    /**
+     * Generate company name and address
+     * @param selection Option to execute
+     */
+    private void runCompanyMaintenance(int selection) {
+        String[] details;
         switch (selection) {
             case 1:
                 if (!COMPANY_NAME_CREATED) {
-                    companyName = createCompanyName(input);
+                    companyName = createCompanyName();
                 } else {
                     errorNarration(COMPANY_NAME_EXISTS_ERROR);
+                    System.out.println("Company name is " + companyName);
                 }
                 break;
 
             case 2:
-               if (COMPANY_NAME_CREATED && !COMPANY_ADDRESS_EXISTS) {
-                   details= addCompanyAddress(input);
-                   mainCompany = createCompanyObject(details, companyName);
-               } else if (!COMPANY_NAME_CREATED){
-                   errorNarration(NO_COMPANY);
-               } else {
-                   errorNarration(COMPANY_ADDRESS_CREATED);
-               }
+                if (COMPANY_NAME_CREATED && !COMPANY_ADDRESS_EXISTS) {
+                    details= addCompanyAddress();
+                    mainCompany = createCompanyObject(details, companyName);
+                    COMPANY_EXISTS=true;
+                    COMPANY_ADDRESS_EXISTS=true;
+                } else if (!COMPANY_NAME_CREATED){
+                    errorNarration(NO_COMPANY);
+                } else {
+                    errorNarration(COMPANY_ADDRESS_CREATED);
+                }
                 break;
             case 3:
                 if (COMPANY_EXISTS && COMPANY_ADDRESS_EXISTS) {
-                    runPayrollApplication(input);
+                    runPayrollApplication(0);
                 } else {
                     errorNarration(COMPANY_NOT_CREATED);
                 }
+
+                break;
             default:
                 System.out.println(INVALID_CHOICE_PAYROLL_NOT_COMPLETE);
                 break;
-       }
+        }
 
     }
 
+    /**
+     * Private helper method to simply print a narration - used for errors
+     * @param narration Error narration to print
+     */
     private void errorNarration(String narration) {
         System.out.println(narration);
     }
 
-     private Company createCompanyObject(String[] addAdressDetails, String name) {
+    /**
+     * Creates a Company object once have address for company and a company name
+     * @param addAdressDetails Array of Strings with Address Attributes
+     * @param name Name of company
+     * @return Company object - currently only 1 eexists
+     */
+    private Company createCompanyObject(String[] addAdressDetails, String name) {
         Address address = new Address(addAdressDetails[0], addAdressDetails[1], addAdressDetails[2],addAdressDetails[3]);
         return new Company(name, address);
-     }
+    }
 
-    private String askStringInput(Scanner input, String narr) {
-        System.out.print(narr);
-        String userInput = input.nextLine();
-        if (!isAlphabet(userInput)) {
+    /**
+     * Method to get String inputs from user
+     * @param narr Narration to be used as prompt for user
+     * @return Input from user as String
+     */
+    private String askStringInput(String narr, String errorNarration) {
+        Scanner newScanner =  new Scanner(System.in);
+        String userInput="";
 
-            System.out.printf("Invalid Input\n\n%s ", narr);
-            userInput = input.nextLine();
+        while (true) {
+
+            try {
+                System.out.print(narr);
+                userInput = newScanner.nextLine();
+                if (!validString(userInput)) {
+                    throw new IllegalArgumentException(errorNarration);
+                } else {
+                    break;
+                }
+            } catch (IllegalArgumentException ex) {
+                System.out.println("Invalid input -  Enter a valid input\n");
+            }
         }
+
         return userInput;
     }
 
-    private boolean isAlphabet(String s) {
-        return s.matches("[\\w\\s]*");
-    }
 
-
-    private String createCompanyName(Scanner input) {
+    /**
+     * Method to get the name of the Company
+     * @return Name of company as string - changes state if COMPANY_NAME_CREATED to true
+     */
+    private String createCompanyName() {
         boolean valid = false;
-        String companyName="";
         while (!valid) {
-            companyName = askStringInput(input, COMPANY_NAME);
+            companyName = askStringInput(COMPANY_NAME, COMPANY_ERROR_NARRATION_INPUT);
             if (companyName.isEmpty() || companyName.length()<=ACCEPTED_COMPANY_NAME_LEN) {
                 System.out.println("\nInvalid Company name - Must only contain letters, numbers and spaces and be at least 4 characters\n");
             } else {
@@ -194,7 +299,12 @@ public class Main {
     }
 
 
-    private String[] addCompanyAddress(Scanner input) {
+    /**
+     * Method to get the attributes of an Address object
+     * @return array of Strings representing Address Attributes
+     */
+    private String[] addCompanyAddress() {
+        Scanner addScanner = new Scanner(System.in);
         String[] details = new String[4];
         int i = 0;
         boolean valid;
@@ -203,28 +313,31 @@ public class Main {
             while (!valid) {
 
                 System.out.print(PRE_NARR + companyAdd);
-                details[i] = input.nextLine();
-                if (!validString(details[i])) {
-                    System.out.printf("Invalid Company %s - must only contain letters, numbers or spaces. Minimum length must be greater than 3 characters\n", companyAdd);
-                } else if (!isAlphabet(details[i])) {
-                    System.out.printf("Please enter a valid %s (Letters, numbers and spaces only)\n", companyAdd);
-                } else {
-                    valid = true;
-                    i++;
+                try {
+                    details[i] = addScanner.nextLine();
+                    if (!validString(details[i])) {
+                        System.out.printf("Invalid Company %s - must only contain letters, numbers or spaces. Minimum length must be greater than 3 characters\n", companyAdd);
+                    } else {
+                        valid = true;
+                        i++;
+                    }
+                } catch (NoSuchElementException ex) {
+                    System.out.println("Invalid input - must enter valid address component\n");
                 }
             }
         }
         return details;
-
-
-    private boolean validString(String s) {
-        return !s.isBlank() && s.length() >= ACCEPTED_COMPANY_NAME_LEN;
     }
 
 
-
-
-
+    /**
+     *
+     * @param stringInput String to check not empty and is of minimum length and is only string characters and spaces
+     * @return true if valid String else false
+     */
+    private boolean validString(String stringInput) {
+        return (!stringInput.isBlank() && stringInput.length() >= ACCEPTED_COMPANY_NAME_LEN && stringInput.matches("[\\w\\s]*"));
+    }
 
     /**
      * Method for getting input as an integer - validated input plus given range of acceptable values
@@ -233,24 +346,29 @@ public class Main {
      * @param upperLimit Highest acceptable value
      * @return The integer entered by user in console
      */
-    public int askIntegerInput(Scanner userInput, String narration, int lowerLimit, int upperLimit) {
-        boolean valid = false;
-        int num =0;
-        while (!valid) {
+    public int askIntegerInput( String narration, int lowerLimit, int upperLimit) {
+        Scanner userInput= new Scanner(System.in);
+        int numberInput =0;
+        while (true) {
             System.out.print( narration );
             try {
-                num = userInput.nextInt();
-                userInput.nextLine();
-                if ((num<lowerLimit) || (num>upperLimit)) {
-                    System.out.printf("Invalid input - enter a number greater than %d and less than %d\n", lowerLimit, upperLimit);
+                numberInput=userInput.nextInt();
+                if (numberInput < lowerLimit || numberInput > upperLimit) {
+                    throw new IllegalArgumentException("Invalid input - input out of range\n");
                 } else {
-                    valid = true;
+                    break;
                 }
-            } catch (NumberFormatException ex) {
+            } catch (InputMismatchException ex) {
                 System.out.println("Invalid input - please enter an integer\n");
+                userInput.nextLine();
+            }   catch (IllegalArgumentException ex) {
+                String errNarration = "Number must be between %d and %d inclusive";
+                String finalNarration = String.format(errNarration, lowerLimit, upperLimit);
+                System.out.printf(finalNarration);
+
             }
         }
-        return num;
+        return numberInput;
     }
 
     /**
@@ -259,22 +377,28 @@ public class Main {
      * @param lowerLimit Lowest acceptable value
      * @param upperLimit Highest acceptable value
      * @return The double entered by user in console
-     */
-    public double askDoubleInput(Scanner userInput, String narration, double lowerLimit, double upperLimit) {
-        boolean valid = false;
-        double num =0;
-        while (!valid) {
+     **/
+    public double askDoubleInput(String narration, double lowerLimit, double upperLimit) {
+        Scanner userInput = new Scanner(System.in);
+
+        double doubleValue =0;
+        while (true) {
             System.out.print(narration);
 
             try {
-                num = userInput.nextDouble();
+                doubleValue = userInput.nextDouble();
+                if (doubleValue<0) {
+                    System.out.println("Please enter a positive number\n");
+                } else {
+                    break;
+                }
+
+            } catch (NumberFormatException | NoSuchElementException ex) {
+                System.out.println("Invalid input - please enter a number\n");
                 userInput.nextLine();
-                valid = true;
-            } catch (NumberFormatException ex) {
-                System.out.println("Invalid input - please enter an number\n");
             }
         }
-        return num;
+        return doubleValue;
     }
 
 

@@ -6,7 +6,7 @@ public class Contractor implements Payable{
     private int hoursWorked;
     private String name;
 
-    public Contractor(String n, double p, int h){
+    public Contractor(String n, int h, double p){
         partsCost=p;
         hoursWorked=h;
         name=n;

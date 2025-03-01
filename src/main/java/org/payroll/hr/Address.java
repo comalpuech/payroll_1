@@ -16,14 +16,16 @@ public class Address {
 
     @Override
 
-    public String toString(){
-        System.out.println("Street: "+street);
-        System.out.println("City: "+city);
-        System.out.println("Post Code: "+postCode);
-        System.out.println("State: "+state);
+    public String toString() {
+        return "Street: " + this.street
+                +"\nCity: " + this.city
+                +"\nState: " + this.state
+                +"\npostCode: " + this.postCode;
     }
 
-
-
-
 }
+
+
+
+
+

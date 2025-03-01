@@ -1,7 +1,7 @@
 package org.payroll.hr;
 
 
-public abstract class Employee {
+public abstract class Employee implements Payable {
 
     private String name;
     private double payRate;
@@ -11,14 +11,15 @@ public abstract class Employee {
     private final double STARTING_PAY_RATE =7.75;
 
     public Employee(String name){
-        this.name=name;
-        this.payRate=0;
-
+        this.name = name;
+        EMPLOYEE_ID = getNextID();
+        payRate = STARTING_PAY_RATE;
     }
 
     public Employee(String name, double payRate){
-        this.name=name;
-        this.payRate=payRate;
+        this.name = name;
+        this.payRate = payRate;
+        EMPLOYEE_ID = getNextID();
     }
 
     public String getName(){
@@ -38,7 +39,9 @@ public abstract class Employee {
     }
 
     public final int getNextID(){
-        return nextID;
+        int id = nextID;
+        nextID++;
+        return id;
     }
 
     public void setAddress(Address address){
@@ -56,7 +59,7 @@ public abstract class Employee {
 
     @Override
     public String toString(){
-
+        return "Employee ID - " + this.EMPLOYEE_ID + "\nName - " +this.name + "\n" + this.address.toString();
     }
 
 }

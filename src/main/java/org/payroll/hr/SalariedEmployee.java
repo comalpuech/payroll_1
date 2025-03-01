@@ -14,4 +14,12 @@ public class SalariedEmployee extends Employee{
         this.salary=salary;
     }
 
+    @Override
+    public String toString() {
+        return String.format("\n\tName: " + this.getName() +
+                "\n\tGross Salary $" + this.salary +
+                "\n\tNet Salary $%.2f", calculatePay());
+
+    }
+
 }

@@ -18,5 +18,16 @@ public class HourlyEmployee extends Employee {
         this.hoursWorked=hoursWorked;
     }
 
+    public double calculatePay(){
+        return hoursWorked*
+    }
+
+
+    public String toString() {
+        return "\t\t\t" + "\n\t" + "Name: " + this.getName() +
+                "\n\t" + "Hours \t " + this.hoursWorked +
+                "\n\t" + "Total Days Payment $" + this.calculatePay();
+    }
+
 
 }

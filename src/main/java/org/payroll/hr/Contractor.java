@@ -20,6 +20,13 @@ public class Contractor implements Payable{
         this.hoursWorked=hoursWorked;
     }
 
+    @Override
+    public String toString() {
+        return"Name: " + this.name +"\nHours Worked: " + this.hoursWorked + "\nParts : " + this.partsCost;
+    }
+
+}
+
 
 
 }
